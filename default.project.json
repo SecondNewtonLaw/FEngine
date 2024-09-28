@@ -1,0 +1,61 @@
+{
+  "name": "FEngine",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "Packages": {
+        "$path": "Packages"
+      }
+    },
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "FEngineExternal": {
+        "$path": "src/Game/Server/External/ServerScriptService"
+      }
+    },
+    "ServerStorage": {
+      "$className": "ServerStorage",
+      "Server": {
+        "$path": "src/Game/Server/Impl"
+      },
+      "FEngineExternal": {
+        "$path": "src/Game/Server/External/ServerStorage"
+      }
+    },
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "$path": "src/Game/Client/External/StarterPlayerScripts"
+      },
+      "StarterCharacterScripts": {
+        "$className": "StarterCharacterScripts",
+        "$path": "src/Game/Client/External/StarterCharacterScripts"
+      }
+    },
+    "ReplicatedFirst": {
+      "$className": "ReplicatedFirst",
+      "ClientReplicatedFirst": {
+        "$path": "src/Game/Client/External/ReplicatedFirst"
+      },
+      "Client": {
+        "$path": "src/Game/Client/Impl"
+      },
+      "EngineLibraries": {
+        "$path": "src/EngineLibraries"
+      },
+      "EngineInternals": {
+        "$path": "src/EngineInternals"
+      },
+      "Common": {
+        "$path": "src/Common/Impl"
+      }
+    },
+    "SoundService": {
+      "$properties": {
+        "RespectFilteringEnabled": true
+      }
+    }
+  }
+}
