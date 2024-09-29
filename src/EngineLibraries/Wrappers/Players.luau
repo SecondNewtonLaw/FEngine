@@ -4,10 +4,9 @@ local Players = game:GetService("Players")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 
 local TypeDefinitions = require(ReplicatedFirst.EngineLibraries.TypeDefinitions)
+local WrapperFactory = require(ReplicatedFirst.EngineLibraries.Wrappers.WrapperFactory)
 
-local players = (setmetatable({}, {
-	__index = Players,
-}) :: any) :: TypeDefinitions.FEnginePlayers
+local players = WrapperFactory.new({} :: TypeDefinitions.FEnginePlayers, Players)
 
 function players:OnCharacterCreated(f: (character: Model) -> ()): ()
 	assert(typeof(f) == "function", "f must be a closure")
@@ -39,4 +38,5 @@ function players:GetCharacterOfPlayer(player: Player): Model
 	return player.Character or player.CharacterAdded:Wait()
 end
 
+players = WrapperFactory.lock(players)
 return players

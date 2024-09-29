@@ -5,5 +5,6 @@ registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 
 [dependencies]
-Red = "red-blox/red@2.3.0"
+red = "red-blox/red@2.3.2"
 signal = "red-blox/signal@2.0.2"
+squash = "data-oriented-house/squash@2.4.0"

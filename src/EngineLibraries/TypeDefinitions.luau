@@ -20,4 +20,9 @@ export type FEnginePlayers = {
 	GetCharacterOfPlayer: (self: FEnginePlayers, player: Player) -> Model,
 } & Players
 
+export type Creatable<T, U...> = {
+	new: (U...) -> T,
+}
+
+
 return {}

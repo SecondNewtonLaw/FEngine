@@ -12,6 +12,9 @@
       "$className": "ServerScriptService",
       "FEngineExternal": {
         "$path": "src/Game/Server/External/ServerScriptService"
+      },
+      "FEngineRuntime": {
+        "$path": "src/EngineRuntime/Server"
       }
     },
     "ServerStorage": {
@@ -27,7 +30,10 @@
       "$className": "StarterPlayer",
       "StarterPlayerScripts": {
         "$className": "StarterPlayerScripts",
-        "$path": "src/Game/Client/External/StarterPlayerScripts"
+        "$path": "src/Game/Client/External/StarterPlayerScripts",
+        "FEngineRuntime": {
+          "$path": "src/EngineRuntime/Client"
+        }
       },
       "StarterCharacterScripts": {
         "$className": "StarterCharacterScripts",
@@ -48,8 +54,14 @@
       "EngineInternals": {
         "$path": "src/EngineInternals"
       },
+      "ExternalCommon": {
+        "$path": "src/Game/Common/External"
+      },
       "Common": {
-        "$path": "src/Common/Impl"
+        "$path": "src/Game/Common/Impl"
+      },
+      "FEngineRuntime": {
+        "$path": "src/EngineRuntime/Common"
       }
     },
     "SoundService": {
