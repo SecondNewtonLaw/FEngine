@@ -38,5 +38,45 @@ function players:GetCharacterOfPlayer(player: Player): Model
 	return player.Character or player.CharacterAdded:Wait()
 end
 
+function players:GetCharacters(waitForCharactersWhichAreNotCreated: boolean): { Model }
+	local characters = {}
+
+	for _, player in self:GetPlayers() do
+		if player.Character then
+			table.insert(characters, player.Character)
+		elseif waitForCharactersWhichAreNotCreated then
+			table.insert(characters, player.CharacterAdded:Wait())
+		end
+	end
+
+	return characters
+end
+
+function players:GetNearestPlayerToPosition(position: Vector3, waitForCharactersWhichAreNotCreated: boolean): Player?
+	local nearestDistance = math.huge
+	local nearestPlayer: Player?
+
+	for _, player in self:GetPlayers() do
+		local character = player.Character
+
+		if not character then
+			if not waitForCharactersWhichAreNotCreated then
+				continue
+			end
+			character = player.CharacterAdded:Wait()
+		end
+
+		assert(character, "Ok this is just impossible to occur I'm surprised")
+
+		local distance = character:GetPivot().Position - position
+		if distance.Magnitude < nearestDistance then
+			nearestDistance = distance.Magnitude
+			nearestPlayer = player
+		end
+	end
+
+	return nearestPlayer
+end
+
 players = WrapperFactory.lock(players)
 return players

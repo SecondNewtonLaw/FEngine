@@ -41,17 +41,32 @@ do
 end
 
 function utilities.SynchronizeIfParallel(runner: BaseScript)
-	assert(runner, "no runner provided as a script; cannot assert if the environment is a parallel one")
+	assert(
+		typeof(runner) == "Instance" and runner:IsA("BaseScript"),
+		"runner is not a valid Instance which inherits from BaseScript; cannot assert if the environment is a parallel one"
+	)
 	if runner:GetActor() then
 		task.synchronize()
 	end
 end
 
 function utilities.DesynchronizeIfParallel(runner: BaseScript)
-	assert(runner, "no runner provided as a script; cannot assert if the environment is a parallel one")
+	assert(
+		typeof(runner) == "Instance" and runner:IsA("BaseScript"),
+		"runner is not a valid Instance which inherits from BaseScript; cannot assert if the environment is a parallel one"
+	)
 	if runner:GetActor() then
 		task.desynchronize()
 	end
+end
+
+function utilities.IsParallel(runner: BaseScript)
+	assert(
+		typeof(runner) == "Instance" and runner:IsA("BaseScript"),
+		"runner is not a valid Instance which inherits from BaseScript; cannot assert if the environment is a parallel one"
+	)
+
+	return not not runner:GetActor()
 end
 
 --[=[

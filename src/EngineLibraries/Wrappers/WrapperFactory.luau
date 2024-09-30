@@ -1,4 +1,9 @@
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
+
+local Utilities = require(ReplicatedFirst.EngineLibraries.Utilities)
 local WrapperFactory = {}
+
+local NATIVE_INHERITOR_OBTAIN_KEY = Utilities.RandomString(256)
 
 function WrapperFactory.new<T, U>(module: T, nativeInherit: U): T & U
 	assert(type(nativeInherit) == "userdata", "Expected nativeInherit to be a native C construct (userdata)")
@@ -6,6 +11,10 @@ function WrapperFactory.new<T, U>(module: T, nativeInherit: U): T & U
 
 	return setmetatable(module :: any, {
 		__index = function(self, index: any)
+			if index == NATIVE_INHERITOR_OBTAIN_KEY then
+				return nativeInherit
+			end
+
 			if rawget(self, index) then
 				return rawget(self, index)
 			end
@@ -38,6 +47,29 @@ function WrapperFactory.new<T, U>(module: T, nativeInherit: U): T & U
 
 			return rawget(self, index)
 		end,
+		__newindex = function(self, index, newValue)
+			local success, _ = pcall(function()
+				return self[NATIVE_INHERITOR_OBTAIN_KEY][index]
+			end)
+
+			if success then
+				print(
+					"[[WrapperFactory]] Overwrite of native value '"
+						.. (if typeof(self[NATIVE_INHERITOR_OBTAIN_KEY]) == "Instance"
+							then self:GetFullName()
+							else tostring(self[NATIVE_INHERITOR_OBTAIN_KEY]))
+						.. "."
+						.. tostring(index)
+						.. "' to value: '"
+						.. tostring(newValue)
+						.. "'"
+				)
+				self[NATIVE_INHERITOR_OBTAIN_KEY][index] = newValue
+				return
+			end
+
+			rawset(self, index, newValue)
+		end,
 	}) :: any
 end
 
@@ -51,8 +83,28 @@ function WrapperFactory.lock<T>(module: T): T
 
 	return setmetatable(module :: any, {
 		__index = idx,
-		__newindex = function()
-			error("this table is readonly.")
+		__newindex = function(self, index, newValue)
+			local success, _ = pcall(function()
+				return self[NATIVE_INHERITOR_OBTAIN_KEY][index]
+			end)
+
+			if success then
+				print(
+					"[[WrapperFactory]] Overwrite of native value '"
+						.. (if typeof(self[NATIVE_INHERITOR_OBTAIN_KEY]) == "Instance"
+							then self:GetFullName()
+							else tostring(self[NATIVE_INHERITOR_OBTAIN_KEY]))
+						.. "."
+						.. tostring(index)
+						.. "' to value: '"
+						.. tostring(newValue)
+						.. "'"
+				)
+				self[NATIVE_INHERITOR_OBTAIN_KEY][index] = newValue
+				return
+			end
+
+			error("this object is readonly.")
 		end,
 		__metatable = "This metatable is locked!",
 	})

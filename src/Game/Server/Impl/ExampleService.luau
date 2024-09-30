@@ -4,6 +4,7 @@ local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local GameTypes = require(ReplicatedFirst.Common.GameTypes)
 local FEngineModule = require(ReplicatedFirst.EngineInternals.FEngineModule)
 local InternalTypeDefinitions = require(ReplicatedFirst.EngineInternals.InternalTypeDefinitions)
+local Instance = require(ReplicatedFirst.EngineLibraries.Wrappers.Instance)
 local Players = require(ReplicatedFirst.EngineLibraries.Wrappers.Players)
 
 type ExampleService = {
@@ -26,7 +27,9 @@ local vftable = {
 			print(packet)
 			warn("New Mode: ", packet.newMode)
 
-			local humanoid = Players:GetCharacterOfPlayer(player):FindFirstChildOfClass("Humanoid")
+			local character = Players:GetCharacterOfPlayer(player)
+			local humanoid =
+				Instance.wrap(Instance.wrap(character):WaitForChildOfClass("Humanoid", 10) :: Humanoid)
 
 			if not humanoid then
 				warn("no humanoid found")
