@@ -34,7 +34,7 @@ function WrapperFactory.new<T, U>(module: T, nativeInherit: U): T & U
 				-- and then we save the closure into our proxy table, lazily keeping it up to date (For performance reasons!).
 
 				if typeof(originalNativeValue) == "function" then
-					print("[[WrapperFactory]] Emitting Proxy for " .. tostring(index) .. " into native inheritor.")
+					-- print("[[WrapperFactory]] Emitting Proxy for " .. tostring(index) .. " into native inheritor.")
 					rawset(self, index, function(clSelf, ...)
 						assert(clSelf == self, "expected WrapperProxy when calling '" .. tostring(index) .. "'!")
 
@@ -89,17 +89,17 @@ function WrapperFactory.lock<T>(module: T): T
 			end)
 
 			if success then
-				print(
-					"[[WrapperFactory]] Overwrite of native value '"
-						.. (if typeof(self[NATIVE_INHERITOR_OBTAIN_KEY]) == "Instance"
-							then self:GetFullName()
-							else tostring(self[NATIVE_INHERITOR_OBTAIN_KEY]))
-						.. "."
-						.. tostring(index)
-						.. "' to value: '"
-						.. tostring(newValue)
-						.. "'"
-				)
+				-- print(
+				-- 	"[[WrapperFactory]] Overwrite of native value '"
+				-- 		.. (if typeof(self[NATIVE_INHERITOR_OBTAIN_KEY]) == "Instance"
+				-- 			then self:GetFullName()
+				-- 			else tostring(self[NATIVE_INHERITOR_OBTAIN_KEY]))
+				-- 		.. "."
+				-- 		.. tostring(index)
+				-- 		.. "' to value: '"
+				-- 		.. tostring(newValue)
+				-- 		.. "'"
+				-- )
 				self[NATIVE_INHERITOR_OBTAIN_KEY][index] = newValue
 				return
 			end

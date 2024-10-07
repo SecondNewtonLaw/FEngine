@@ -40,15 +40,15 @@ for _, bridgeModule: ModuleScript in ReplicatedFirst.Common.NetworkBridges:GetDe
 			)
 		end)
 
-		assert(
-			typeof(bridge.Initialize) == "function",
-			"Initialize does not exist or is not a function on NetworkBridge; cannot initialize FEngine NetworkBridge. Affected NetworkBridge -> "
-				.. bridgeModule:GetFullName()
-		)
-
 		if not success then
-			warn("-- FEngine NetworkBridge require failed")
+			warn("-- FEngine NetworkBridge require failed!")
 		else
+			assert(
+				typeof(bridge.Initialize) == "function",
+				"Initialize does not exist or is not a function on NetworkBridge; cannot initialize FEngine NetworkBridge. Affected NetworkBridge -> "
+					.. bridgeModule:GetFullName()
+			)
+
 			print("FEngine: Bootstrapping NetworkBridge " .. bridgeModule:GetFullName())
 			bridge:Initialize(FEngineServiceProvider)
 			FEngineServiceProvider:RegisterBridge(bridge)
@@ -70,14 +70,14 @@ for _, engineModule: ModuleScript in scripts:GetDescendants() do
 			warn("Error Loading module " .. err .. "\nTrace: " .. debug.traceback("FEngine module require failed: "))
 		end)
 
-		assert(
-			typeof(service.Initialize) == "function",
-			"Initialize does not exist or is not a function on Service; cannot initialize FEngine Service. Affected Service -> "
-				.. engineModule:GetFullName()
-		)
 		if not success then
-			warn("-- FEngine module require failed: ")
+			warn("-- FEngine module require failed! ")
 		else
+			assert(
+				typeof(service.Initialize) == "function",
+				"Initialize does not exist or is not a function on Service; cannot initialize FEngine Service. Affected Service -> "
+					.. engineModule:GetFullName()
+			)
 			print("FEngine: Bootstrapping Service " .. engineModule:GetFullName())
 			service:Initialize(FEngineServiceProvider)
 			FEngineServiceProvider:RegisterService(service)

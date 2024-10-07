@@ -6,57 +6,116 @@ local red = require(ReplicatedStorage.Packages.red)
 
 local FEngineEvent = {}
 
-function FEngineEvent.new<T>(
+--[[
+	FEngineEvent<T, U...>, type T is discarded :)
+
+	if structDeserializer is nil, then any argument may be passed, regardless.
+	if structDeserializer is a table, then the input will be checked to be a buffer.
+	if structDeserializer is a function, then the input will be passed to the function for validation.
+]]
+
+function FEngineEvent.new<T, U...>(
 	eventName: InternalTypeDefinitions.FEngineEventOptions,
-	structDeserializer: InternalTypeDefinitions.Serializable<T>
+	structDeserializer: InternalTypeDefinitions.Serializable<T>? | (U...) -> U...
 )
 	local backingEvent = red.SharedSignalEvent(eventName, function(...)
-		assert(select("#", ...) == 1, "expected an argument count of 1")
-		assert(typeof(select(1, ...)) == "buffer", "expected argument one to be a buffer")
+		if typeof(structDeserializer) == "table" then
+			assert(select("#", ...) == 1, "expected an argument count of 1")
+			assert(typeof(select(1, ...)) == "buffer", "expected argument one to be a buffer")
 
-		return structDeserializer.Deserialize(select(1, ...))
+			return structDeserializer.Deserialize(select(1, ...))
+		elseif typeof(structDeserializer) == "function" then
+			return structDeserializer(...)
+		end
+
+		return ...
 	end)
 
 	local engineEvent = {}
 
-	engineEvent.FireAllClients = function(self, a: T)
-		assert(typeof(a) ~= "nil", "no second argument provided. Did you use an index instead of a namecall?")
-		backingEvent.FireAllClients(backingEvent, structDeserializer.Serialize(a))
+	engineEvent.FireAllClients = function(self, ...)
+		assert(
+			select("#", ...) ~= 0,
+			"no second argument/arguments provided. Did you use an index instead of a namecall?"
+		)
+
+		backingEvent.FireAllClients(
+			backingEvent,
+			if typeof(structDeserializer) == "table" then structDeserializer.Serialize(select(1, ...)) else ...
+		)
 	end
 
-	engineEvent.FireClient = function(self, player: Player, a: T)
-		assert(typeof(a) ~= "nil", "no third argument provided. Did you use an index instead of a namecall?")
-		backingEvent.FireClient(backingEvent, player, structDeserializer.Serialize(a))
+	engineEvent.FireClient = function(self, player: Player, ...)
+		assert(
+			select("#", ...) ~= 0,
+			"no third argument/arguments provided. Did you use an index instead of a namecall?"
+		)
+		backingEvent.FireClient(
+			backingEvent,
+			player,
+			if typeof(structDeserializer) == "table" then structDeserializer.Serialize(select(1, ...)) else ...
+		)
 	end
 
-	engineEvent.FireAllClientsExcept = function(self, player: Player, a: T)
-		assert(typeof(a) ~= "nil", "no third argument provided. Did you use an index instead of a namecall?")
-		backingEvent.FireAllClientsExcept(backingEvent, player, structDeserializer.Serialize(a))
+	engineEvent.FireAllClientsExcept = function(self, player: Player, ...)
+		assert(
+			select("#", ...) ~= 0,
+			"no third argument/arguments provided. Did you use an index instead of a namecall?"
+		)
+		backingEvent.FireAllClientsExcept(
+			backingEvent,
+			player,
+			if typeof(structDeserializer) == "table" then structDeserializer.Serialize(select(1, ...)) else ...
+		)
 	end
 
-	engineEvent.FireClients = function(self, players: { Player }, a: T)
-		assert(typeof(a) ~= "nil", "no third argument provided. Did you use an index instead of a namecall?")
-		backingEvent.FireClients(backingEvent, players, structDeserializer.Serialize(a))
+	engineEvent.FireClients = function(self, players: { Player }, ...)
+		assert(
+			select("#", ...) ~= 0,
+			"no third argument/arguments provided. Did you use an index instead of a namecall?"
+		)
+		backingEvent.FireClients(
+			backingEvent,
+			players,
+			if typeof(structDeserializer) == "table" then structDeserializer.Serialize(select(1, ...)) else ...
+		)
 	end
 
-	engineEvent.FireFilteredClients = function(self, filter: (Player) -> boolean, a: T)
-		assert(typeof(a) ~= "nil", "no third argument provided. Did you use an index instead of a namecall?")
-		backingEvent.FireFilteredClients(backingEvent, filter, structDeserializer.Serialize(a))
+	engineEvent.FireFilteredClients = function(self, filter: (Player) -> boolean, ...)
+		assert(
+			select("#", ...) ~= 0,
+			"no third argument/arguments provided. Did you use an index instead of a namecall?"
+		)
+		backingEvent.FireFilteredClients(
+			backingEvent,
+			filter,
+			if typeof(structDeserializer) == "table" then structDeserializer.Serialize(select(1, ...)) else ...
+		)
 	end
 
-	engineEvent.FireServer = function(self, a: T)
-		assert(typeof(a) ~= "nil", "no second argument provided. Did you use an index instead of a namecall?")
-		backingEvent.FireServer(backingEvent, structDeserializer.Serialize(a))
+	engineEvent.FireServer = function(self, ...)
+		assert(
+			select("#", ...) ~= 0,
+			"no second argument/arguments provided. Did you use an index instead of a namecall?"
+		)
+
+		backingEvent.FireServer(
+			backingEvent,
+			if typeof(structDeserializer) == "table" then structDeserializer.Serialize(select(1, ...)) else ...
+		)
 	end
 
-	engineEvent.OnServer = function(self, callback: (player: Player, packet: T) -> ()): RBXScriptConnection
+	engineEvent.OnServer = function<T...>(self, callback: (player: Player, T...) -> ()): RBXScriptConnection
 		assert(
 			typeof(callback) == "function",
 			"second argument is not a closure. Did you use an index instead of a namecall or sent the wrong parameter?"
 		)
 
-		local disconnector = backingEvent.OnServer(backingEvent, function(player, arg)
-			callback(player, structDeserializer.Deserialize(arg))
+		local disconnector = backingEvent.OnServer(backingEvent, function(player, ...)
+			(callback :: any)(
+				player,
+				if typeof(structDeserializer) == "table" then structDeserializer.Deserialize(select(1, ...)) else ...
+			)
 		end)
 
 		return (
@@ -69,27 +128,31 @@ function FEngineEvent.new<T>(
 		) :: RBXScriptConnection
 	end
 
-	engineEvent.OnClient = function(self, callback: (packet: T) -> ()): RBXScriptConnection
+	engineEvent.OnClient = function<T...>(self, callback: (T...) -> ()): RBXScriptConnection
 		assert(
 			typeof(callback) == "function",
 			"second argument is not a closure. Did you use an index instead of a namecall or sent the wrong parameter?"
 		)
 
-		local disconnector = backingEvent.OnClient(backingEvent, function(arg)
-			callback(structDeserializer.Deserialize(arg))
+		local disconnector = backingEvent.OnClient(backingEvent, function(...)
+			(callback :: any)(
+				if typeof(structDeserializer) == "table" then structDeserializer.Deserialize(select(1, ...)) else ...
+			)
 		end)
 
 		return (
 			{
+				Connected = true,
 				Disconnect = function(self: RBXScriptConnection)
+					assert(self.Connected, "cannot disconnect an already disconnected")
 					self.Connected = false
-					return disconnector.Disconnect()
+					return disconnector()
 				end,
 			} :: any
 		) :: RBXScriptConnection
 	end
 
-	return engineEvent
+	return engineEvent :: InternalTypeDefinitions.FEngineEvent<U...>
 end
 
 return FEngineEvent

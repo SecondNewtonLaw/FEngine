@@ -3,6 +3,11 @@
 registry = "test"
 
 [[package]]
+name = "brittonfischer/camerashaker"
+version = "0.1.0"
+dependencies = []
+
+[[package]]
 name = "data-oriented-house/squash"
 version = "2.4.0"
 dependencies = []
@@ -10,7 +15,7 @@ dependencies = []
 [[package]]
 name = "dottik/fengine"
 version = "0.1.0"
-dependencies = [["red", "red-blox/red@2.3.2"], ["signal", "red-blox/signal@2.0.2"], ["squash", "data-oriented-house/squash@2.4.0"]]
+dependencies = [["camerashaker", "brittonfischer/camerashaker@0.1.0"], ["red", "red-blox/red@2.3.2"], ["signal", "red-blox/signal@2.0.2"], ["squash", "data-oriented-house/squash@2.4.0"]]
 
 [[package]]
 name = "red-blox/future"

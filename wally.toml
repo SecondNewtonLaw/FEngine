@@ -8,3 +8,5 @@ realm = "shared"
 red = "red-blox/red@2.3.2"
 signal = "red-blox/signal@2.0.2"
 squash = "data-oriented-house/squash@2.4.0"
+
+camerashaker = "brittonfischer/camerashaker@0.1.0"

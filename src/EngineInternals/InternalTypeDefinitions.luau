@@ -1,4 +1,5 @@
 --!strict
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 export type FEngineServiceProvider = {
 	IsLoaded: (self: FEngineServiceProvider, serviceName: string) -> boolean,
@@ -8,6 +9,27 @@ export type FEngineServiceProvider = {
 	GetBridge: <T>(self: FEngineServiceProvider, bridgeName: string) -> T?,
 	GetService: <T>(self: FEngineServiceProvider, serviceName: string) -> T?,
 }
+
+export type FEngineFastFlagDefinition = {
+	FlagName: string,
+	Value: boolean,
+}
+
+export type FEngineNetVar<T> = {
+	GetValue: (self: FEngineNetVar<T>) -> T,
+	--[=[
+		This function only works on the server.
+
+		@return T a copy of the old, original value.
+	]=]
+	SetValue: (self: FEngineNetVar<T>, value: T) -> T,
+
+	HasValue: (self: FEngineNetVar<T>) -> boolean,
+
+	IsOwned: (self: FEngineNetVar<T>) -> boolean,
+
+	OnValueChanged: (self: FEngineNetVar<T>, callback: (T) -> ()) -> RBXScriptConnection,
+} & T
 
 export type FEngineModule<T> = {
 	ModuleName: string,
@@ -20,17 +42,17 @@ export type FEngineModuleFunctionTable<T> = {
 	Initialize: (self: FEngineModuleFunctionTable<T>, FEngineServiceProvider: FEngineServiceProvider) -> (),
 } & FEngineModule<T>
 
-export type FEngineEvent<T> = {
-	FireAllClients: (self: FEngineEvent<T>, obj: T) -> (),
-	FireClient: (self: FEngineEvent<T>, player: Player, obj: T) -> (),
-	FireClients: (self: FEngineEvent<T>, players: { Player }, obj: T) -> (),
-	FireAllClientsExcept: (self: FEngineEvent<T>, player: Player, obj: T) -> (),
-	FireFilteredClients: (self: FEngineEvent<T>, filter: (player: Player) -> boolean, obj: T) -> (),
+export type FEngineEvent<U...> = {
+	FireAllClients: (self: FEngineEvent<U...>, U...) -> (),
+	FireClient: (self: FEngineEvent<U...>, player: Player, U...) -> (),
+	FireClients: (self: FEngineEvent<U...>, players: { Player }, U...) -> (),
+	FireAllClientsExcept: (self: FEngineEvent<U...>, player: Player, U...) -> (),
+	FireFilteredClients: (self: FEngineEvent<U...>, filter: (player: Player) -> boolean, U...) -> (),
 
-	FireServer: (self: FEngineEvent<T>, obj: T) -> (),
+	FireServer: (self: FEngineEvent<U...>, U...) -> (),
 
-	OnServer: (self: FEngineEvent<T>, callback: (player: Player, packet: T) -> ()) -> RBXScriptConnection,
-	OnClient: (self: FEngineEvent<T>, callback: (packet: T) -> ()) -> RBXScriptConnection,
+	OnServer: (self: FEngineEvent<U...>, callback: (player: Player, U...) -> ()) -> RBXScriptConnection,
+	OnClient: (self: FEngineEvent<U...>, callback: (U...) -> ()) -> RBXScriptConnection,
 }
 
 export type FEngineBridge<T> = {

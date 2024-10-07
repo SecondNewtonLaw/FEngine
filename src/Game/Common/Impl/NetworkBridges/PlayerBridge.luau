@@ -8,19 +8,22 @@ local FEngineEvent = require(ReplicatedFirst.EngineInternals.FEngineEvent)
 local InternalTypeDefinitions = require(ReplicatedFirst.EngineInternals.InternalTypeDefinitions)
 
 local bridge = {
-	BridgeName = "",
+	BridgeName = "PlayerBridge",
 }
 
 do
 	function bridge:Initialize()
 		bridge.Events = {
-			SetSprint = FEngineEvent.new({ Name = "SetSprint", Unreliable = false }, SetSprintPacket),
+			SetSprint = FEngineEvent.new({ Name = "SetSprint", Unreliable = false }, nil),
 		}
+	end
+
+	function bridge:SetSprint(packet: GameTypes.SetSprintPacket)
+		bridge.Events.SetSprint:Fire(packet)
 	end
 end
 
-function bridge:SetSprint(SetSprintPacket: GameTypes.SetSprintPacket)
-	bridge.Events.SetSprint:FireServer(SetSprintPacket)
-end
-
-return FEngineBridge.new("ExampleBridge", bridge :: InternalTypeDefinitions.FEngineBridgeFunctionTable<{}>)
+return FEngineBridge.new(
+	"PlayerBridge",
+	bridge :: InternalTypeDefinitions.FEngineBridgeFunctionTable<GameTypes.PlayerBridge>
+)

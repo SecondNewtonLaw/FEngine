@@ -26,6 +26,10 @@ export type FEnginePlayers = {
 	) -> Player?,
 } & Players
 
+export type FEngineCamera = {
+	IsOnCameraFrustrum: (self: FEngineCamera, object: BasePart) -> boolean,
+} & Camera
+
 export type FEngineInstance<T> = {
 	ExecuteUntilDestroyed: (self: FEngineInstance<T>, f: () -> (), executeEverySeconds: number) -> (),
 	IsClonable: (self: FEngineInstance<T>) -> boolean,
@@ -37,6 +41,8 @@ export type FEngineInstance<T> = {
 		@yields
 	]=]
 	WaitForChildWhichIsA: <U>(self: FEngineInstance<T>, className: string, timeout: number?) -> (U & Instance) | nil,
+
+	HasField: (self: FEngineInstance<T>, fieldName: string) -> boolean,
 } & Instance & T
 
 export type Creatable<T, U...> = {

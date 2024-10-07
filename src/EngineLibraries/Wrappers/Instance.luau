@@ -119,7 +119,18 @@ function instance.wrap<T>(existing: T & Instance)
 		return found :: (T & Instance) | nil
 	end
 
+	function insn:HasField(fieldName: string): boolean
+		assert(typeof(fieldName) == "string", "fieldName must be a string")
+
+		local successful = pcall(function(i: Instance, s: string)
+			return (i :: any)[s]
+		end, insn, fieldName)
+
+		return successful
+	end
+
 	insn = WrapperFactory.lock(insn)
+
 	return insn
 end
 
