@@ -1,4 +1,11 @@
 --!strict
+--[[
+	Utilities.lua - Part of the FEngine Roblox Framework
+		- Written by @usrdottik
+
+	Generic utility functions, varied in nature.
+]]
+
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 
 local TypeDefinitions = require(ReplicatedFirst.EngineLibraries.TypeDefinitions)

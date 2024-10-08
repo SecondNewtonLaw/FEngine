@@ -1,4 +1,11 @@
 --!strict
+--[[
+	Instance.lua - Part of the FEngine Roblox Framework
+		- Written by @usrdottik
+
+	Extends the workspace.CurrentCamera for added functionality, only works on clients as detailed by the assert.
+]]
+
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local RunService = game:GetService("RunService")
 

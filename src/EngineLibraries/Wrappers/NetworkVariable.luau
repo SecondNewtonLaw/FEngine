@@ -1,11 +1,16 @@
 --!strict
+--[[
+	NetworkVariable.lua - Part of the FEngine Roblox Framework
+		- Written by @usrdottik
+
+	Extends ValueBase objects with functionality that allows them to be treated as an FEngineNetVar<<T>.
+]]
 
 local Players = game:GetService("Players")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
-local FEngineEvent = require(ReplicatedFirst.EngineInternals.FEngineEvent)
 local InternalTypeDefinitions = require(ReplicatedFirst.EngineInternals.InternalTypeDefinitions)
 local InstanceWrapper = require(ReplicatedFirst.EngineLibraries.Wrappers.Instance)
 local WrapperFactory = require(ReplicatedFirst.EngineLibraries.Wrappers.WrapperFactory)
@@ -44,6 +49,7 @@ end
 
 function networkVariable.wrap<T>(existing: T & Instance & ValueBase)
 	assert(typeof(existing) == "Instance", "existing must be an Instance type.")
+	assert(existing:IsA("ValueBase"), "existing must inherit from ValueBase.")
 
 	local insn = WrapperFactory.new({} :: InternalTypeDefinitions.FEngineNetVar<T>, existing)
 

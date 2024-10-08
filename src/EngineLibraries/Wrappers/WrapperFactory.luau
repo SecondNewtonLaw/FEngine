@@ -1,3 +1,11 @@
+--!strict
+--[[
+	WrapperFactory.lua - Part of the FEngine Roblox Framework
+		- Written by @usrdottik
+
+	Provides a way to 'inherit' from native C constructs in Roblox.
+]]
+
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 
 local Utilities = require(ReplicatedFirst.EngineLibraries.Utilities)
@@ -35,11 +43,15 @@ function WrapperFactory.new<T, U>(module: T, nativeInherit: U): T & U
 
 				if typeof(originalNativeValue) == "function" then
 					-- print("[[WrapperFactory]] Emitting Proxy for " .. tostring(index) .. " into native inheritor.")
-					rawset(self, index, function(clSelf, ...)
-						assert(clSelf == self, "expected WrapperProxy when calling '" .. tostring(index) .. "'!")
+					rawset(
+						self,
+						index,
+						function(clSelf, ...)
+							assert(clSelf == self, "expected WrapperProxy when calling '" .. tostring(index) .. "'!")
 
-						return originalNativeValue(nativeInherit, ...)
-					end)
+							return (originalNativeValue :: (...any) -> ...any)(nativeInherit, ...)
+						end :: any
+					)
 				else
 					return originalNativeValue
 				end
@@ -56,7 +68,7 @@ function WrapperFactory.new<T, U>(module: T, nativeInherit: U): T & U
 				print(
 					"[[WrapperFactory]] Overwrite of native value '"
 						.. (if typeof(self[NATIVE_INHERITOR_OBTAIN_KEY]) == "Instance"
-							then self:GetFullName()
+							then (self :: any):GetFullName()
 							else tostring(self[NATIVE_INHERITOR_OBTAIN_KEY]))
 						.. "."
 						.. tostring(index)
@@ -71,6 +83,14 @@ function WrapperFactory.new<T, U>(module: T, nativeInherit: U): T & U
 			rawset(self, index, newValue)
 		end,
 	}) :: any
+end
+
+function WrapperFactory.getNative<T>(wrappedInstance: any): T
+	assert(typeof(wrappedInstance) == "table", "Expected instance to be a table object.")
+	local native = wrappedInstance[NATIVE_INHERITOR_OBTAIN_KEY]
+	assert(native, "This object does not have a native inheritor.")
+
+	return native
 end
 
 function WrapperFactory.lock<T>(module: T): T

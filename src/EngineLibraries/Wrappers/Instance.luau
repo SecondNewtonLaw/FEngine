@@ -1,4 +1,10 @@
 --!strict
+--[[
+	Instance.lua - Part of the FEngine Roblox Framework
+		- Written by @usrdottik
+
+	Extends Instance objects with extra functionality.
+]]
 
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
 

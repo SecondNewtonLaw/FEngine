@@ -1,4 +1,10 @@
 --!strict
+--[[
+	Players.lua - Part of the FEngine Roblox Framework
+		- Written by @usrdottik
+
+	Extends the Players Roblox Service for added functionality.
+]]
 
 local Players = game:GetService("Players")
 local ReplicatedFirst = game:GetService("ReplicatedFirst")
